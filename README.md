@@ -1,1 +1,2 @@
-CSV from https://mainstream.ghan.nl/export.html
+- CSV from https://mainstream.ghan.nl/export.html
+- `node index.js > out.csv`
