@@ -1,7 +1,6 @@
 import { import_data } from './import.js'
 
 async function main() {
-	// each fucking listen
 	let data = await import_data()
 
 	for (let i = 0; i < data.length; i++) {
