@@ -17,12 +17,12 @@ async function main() {
 			continue
 		}
 		let count = 1
-		const string_a = a.day + a.artist + a.track
+		const string_a = a.day + a.artist
 		if (seen.has(string_a)) continue
 		for (let j = i + 1; j < data.length; j++) {
 			const b = data[j]
 			if (a.day !== b.day) break
-			const string_b = b.day + b.artist + b.track
+			const string_b = b.day + b.artist
 			if (string_a === string_b) count++
 		}
 		a.count = count
@@ -31,7 +31,7 @@ async function main() {
 
 	const obsessions = []
 	for (const entry of data) {
-		if (entry.count >= 10)
+		if (entry.count >= 15)
 			obsessions.push({
 				day: entry.day,
 				count: entry.count,
