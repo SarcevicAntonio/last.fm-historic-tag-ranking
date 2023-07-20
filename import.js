@@ -17,3 +17,17 @@ export function import_data() {
 			})
 	})
 }
+
+const TAG_PER_ARTIST_FILE_PATH = './tag_per_artist.json'
+
+export function import_tag_per_artist() {
+	try {
+		return new Map(JSON.parse(fs.readFileSync(TAG_PER_ARTIST_FILE_PATH)))
+	} catch {
+		return new Map()
+	}
+}
+
+export function export_tag_per_artist(map) {
+	fs.writeFileSync(TAG_PER_ARTIST_FILE_PATH, JSON.stringify([...map]))
+}
