@@ -1,6 +1,7 @@
 import { import_data } from './import.js'
 
 async function main() {
+	// each fucking listen
 	let data = await import_data()
 
 	for (let i = 0; i < data.length; i++) {
@@ -11,61 +12,34 @@ async function main() {
 
 	const seen = new Set()
 
+	const artists_each_year = []
+
 	for (let i = 0; i < data.length; i++) {
 		const a = data[i]
-		if (+a.uts < 1321995200) {
-			continue
-		}
-		let count = 1
 		const string_a = a.year + a.artist
 		if (seen.has(string_a)) continue
-		for (let j = i + 1; j < data.length; j++) {
-			const b = data[j]
-			if (a.year !== b.year) break
-			const string_b = b.year + b.artist
-			if (string_a === string_b) count++
-		}
-		a.count = count
+		artists_each_year.push({ year: a.year, artist: a.artist })
 		seen.add(string_a)
 	}
 
-	data = data.filter((a) => !!a.count)
+	artists_each_year.sort((a, b) => a.year - b.year)
 
-	data = data.sort((a, b) => {
-		if (a.year === b.year) return b.count - a.count
-		return b.year - a.year
-	})
+	const years_and_counts = {}
+	const old_artists = new Set()
 
-	const top_per_year = []
-	let year = data[0].year
-	let count = 0
-	for (const entry of data) {
-		if (entry.year === year && count < 10) {
-			count++
-			top_per_year.push({
-				year: entry.year,
-				count: entry.count,
-				artist: entry.artist,
-				track: entry.track,
-			})
-		} else if (entry.year !== year) {
-			year = entry.year
-			count = 0
-			count++
-			top_per_year.push({
-				year: entry.year,
-				count: entry.count,
-				artist: entry.artist,
-				track: entry.track,
-			})
+	for (const { artist, year } of artists_each_year) {
+		if (!years_and_counts[year]) years_and_counts[year] = { old_artist: 0, new_artist: 0 }
+		if (old_artists.has(artist)) {
+			years_and_counts[year]['old_artist']++
 		} else {
-			continue
+			years_and_counts[year]['new_artist']++
+			old_artists.add(artist)
 		}
 	}
 
-	console.log('year,count,artist')
-	for (const { year, count, artist } of top_per_year) {
-		console.log([year, count, artist].map((v) => `"${v}"`).join(','))
+	console.log('year,old_artist,new_artist')
+	for (const [year, { old_artist, new_artist }] of Object.entries(years_and_counts)) {
+		console.log([year, old_artist, new_artist].map((v) => `"${v}"`).join(','))
 	}
 }
 
