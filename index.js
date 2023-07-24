@@ -1,7 +1,8 @@
-import { export_tag_per_artist, import_data, import_tag_per_artist } from './import.js'
+import { import_data, import_tag_per_artist } from './import.js'
 
 async function main() {
 	let data = await import_data()
+	const tag_per_artist = import_tag_per_artist()
 
 	for (let i = 0; i < data.length; i++) {
 		const entry = data[i]
@@ -9,45 +10,29 @@ async function main() {
 		entry.year = entry.date.getFullYear()
 	}
 
-	const seen = new Set()
-	const artists_each_year = []
-	const tag_per_artist = import_tag_per_artist()
+	const tag_count_each_year = {}
 
 	for (let i = 0; i < data.length; i++) {
-		const a = data[i]
-		let count = 1
-		const string_a = a.year + a.artist
-		if (seen.has(string_a)) continue
-		for (let j = i + 1; j < data.length; j++) {
-			const b = data[j]
-			if (a.year !== b.year) break
-			const string_b = b.year + b.artist
-			if (string_a === string_b) count++
+		const scrobbl = data[i]
+		if (+scrobbl.uts < 1321995200) {
+			continue
 		}
-		let tag = tag_per_artist.get(a.artist)
-		if (!tag) {
-			console.log('# Fetching tags for artist: ', a.artist)
-			// fetch it and save in map
-			tag = await fetch(
-				`https://ws.audioscrobbler.com/2.0/?method=artist.gettoptags&artist=${a.artist}&api_key=a014e53e73aba0fde3d38f1c5ec3c12b&format=json`
-			)
-				.then((r) => r.json())
-				.then((json) => json.toptags.tag[0].name)
-				.catch((reason) => {
-					console.error('FAILED TO GET TAG FOR ARTIST: ' + a.artist)
-					console.error('reason: ', JSON.stringify(reason))
-				})
-			tag_per_artist.set(a.artist, tag)
-		}
-		artists_each_year.push({ year: a.year, artist: a.artist, count, tag })
-		seen.add(string_a)
+		let tag = tag_per_artist.get(scrobbl.artist)
+		if (!tag_count_each_year[tag]) tag_count_each_year[tag] = {}
+		if (!tag_count_each_year[tag][scrobbl.year]) tag_count_each_year[tag][scrobbl.year] = 0
+		tag_count_each_year[tag][scrobbl.year]++
 	}
 
-	export_tag_per_artist(tag_per_artist)
+	console.log('tag,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023')
+	for (const [tag, years_count] of Object.entries(tag_count_each_year)) {
+		let row = [tag]
 
-	console.log('year,artist,count,tag')
-	for (const { year, artist, count, tag } of artists_each_year) {
-		console.log([year, artist, count, tag].map((v) => `"${v}"`).join(','))
+		for (const [year, count] of Object.entries(years_count)) {
+			row[year - 2010] = count
+		}
+
+		row = Array.from(row, (v) => (v ? v : 0))
+		console.log(row.map((v) => `"${v}"`).join(','))
 	}
 }
 
