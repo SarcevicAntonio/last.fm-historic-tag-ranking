@@ -78,7 +78,7 @@ async function main() {
 	console.warn('getting top tags')
 	for (const array of Object.values(tag_count_per_year)) {
 		array.sort((a, b) => b.count - a.count)
-		array.splice(50, array.length - 1)
+		array.splice(30, array.length - 1)
 	}
 
 	console.warn('selecting unique tags')
