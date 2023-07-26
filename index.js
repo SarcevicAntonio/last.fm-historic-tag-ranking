@@ -1,5 +1,9 @@
 import { export_tag_per_artist, import_data, import_tag_per_artist } from './import.js'
 
+// configuration
+const SCROBBLES_CSV = './scrobbles-Linkplay9-1689688285.csv'
+const NUMBER_TOP_TAGS = 30
+const FETCH_TAGS = true
 const IGNORED_TAGS = [
 	null,
 	'seen live',
@@ -11,11 +15,9 @@ const IGNORED_TAGS = [
 	'favorites',
 ]
 
-const FETCH_TAGS = false
-
 async function main() {
 	console.warn('importing local data')
-	let data = await import_data()
+	let data = await import_data(SCROBBLES_CSV)
 	const tag_per_artist = import_tag_per_artist()
 
 	console.warn('converting dates')
@@ -78,7 +80,7 @@ async function main() {
 	console.warn('getting top tags')
 	for (const array of Object.values(tag_count_per_year)) {
 		array.sort((a, b) => b.count - a.count)
-		array.splice(30, array.length - 1)
+		array.splice(NUMBER_TOP_TAGS, array.length - 1)
 	}
 
 	console.warn('selecting unique tags')
