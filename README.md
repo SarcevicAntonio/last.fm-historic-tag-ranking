@@ -2,11 +2,17 @@
 
 Generate a ranking of top tags for each year based on the nr. 1 tag of artists you listend to.
 
+WARNING: this script is quite hacky and may require some adjustments to work for your dataset. ill try to make it bit easier to use in the future, and maybe even creating a user-friendly website for direclty generating the graph directly from a last.fm user name. let me know if you are interested.
+
+PREREQUISITE: You need to have Node.JS installed on your system 
+
 ## getting the data
 
 1. clone the repo
 1. export a CSV of all your scrobbles from https://mainstream.ghan.nl/export.html and put it somewhere in this folder
-1. update the `SCROBBLES_CSV` to match
+1. update the `SCROBBLES_CSV` variable to match
+1. ???
+1. run `npm install`
 1. run `node index.js > out.csv` to get your tag ranking
 
 ## visualizing the data with Datawrapper
