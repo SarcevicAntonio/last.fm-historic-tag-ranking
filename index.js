@@ -13,6 +13,13 @@ const IGNORED_TAGS = [
 	'horses and ponies and unicorns too',
 	'countries and continents',
 	'favorites',
+	'female vocalists',
+	'Deutschrap',
+	'angeschwollene Eier',
+	'french',
+	'Norway',
+	'haiti',
+	'belgian',
 ]
 
 async function main() {
@@ -27,6 +34,8 @@ async function main() {
 		entry.year = entry.date.getFullYear()
 	}
 
+	const already_fetched_artists = new Set()
+
 	const tag_count_per_year = {}
 
 	console.warn('searching tags')
@@ -37,7 +46,12 @@ async function main() {
 			continue
 		}
 		let tag = tag_per_artist.get(scrobbl.artist)
-		if (FETCH_TAGS && (!tag || IGNORED_TAGS.includes(tag)) && tag != null) {
+		if (
+			FETCH_TAGS &&
+			(!tag || IGNORED_TAGS.includes(tag)) &&
+			tag != null &&
+			!already_fetched_artists.has(scrobbl.artist)
+		) {
 			console.warn('# Fetching tags for artist: ', scrobbl.artist)
 			const tags = await fetch(
 				`https://ws.audioscrobbler.com/2.0/?method=artist.gettoptags&artist=${scrobbl.artist}&api_key=a014e53e73aba0fde3d38f1c5ec3c12b&format=json`
@@ -58,13 +72,16 @@ async function main() {
 				if (!IGNORED_TAGS.includes(tag)) break
 			}
 
+			already_fetched_artists.add(scrobbl.artist)
 			console.warn(tag)
 			if (tag && (tag.toLowerCase() === 'hip hop' || tag.toLowerCase() === 'rap')) tag = 'Hip-Hop'
+			if (tag && tag.toLowerCase() === '8-bit') tag = 'chiptune'
 			tag_per_artist.set(scrobbl.artist, tag)
 			export_tag_per_artist(tag_per_artist)
 		}
 
 		if (tag && (tag.toLowerCase() === 'hip hop' || tag.toLowerCase() === 'rap')) tag = 'Hip-Hop'
+		if (tag && tag.toLowerCase() === '8-bit') tag = 'chiptune'
 
 		if (IGNORED_TAGS.includes(tag)) continue
 
@@ -94,7 +111,12 @@ async function main() {
 	console.warn('printing ranking')
 	console.log('tag,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023')
 	for (const tag of [...tag_set]) {
-		const row = [tag]
+		const row = [
+			tag
+				.split(' ')
+				.map((s) => s[0].toUpperCase() + s.substring(1))
+				.join(' '),
+		]
 		for (let year = 2011; year <= 2023; year++) {
 			const index = tag_count_per_year[year].findIndex((i) => i.tag === tag)
 			if (index === -1) {
