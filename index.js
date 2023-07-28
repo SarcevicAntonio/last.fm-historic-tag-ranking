@@ -42,8 +42,8 @@ async function main() {
 	console.warn('searching tags')
 	for (let i = 0; i < data.length; i++) {
 		const scrobbl = data[i]
-		// this removes weird data i don't recognize
-		if (+scrobbl.uts < 1321995200) {
+		// this removes weird "1970" data from the export, not sure what happened there
+		if (+scrobbl.uts < 31536000) {
 			continue
 		}
 		let tag = tag_per_artist.get(scrobbl.artist)

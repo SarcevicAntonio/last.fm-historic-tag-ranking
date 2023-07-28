@@ -2,7 +2,7 @@
 
 Generate a ranking of top tags for each year based on the nr. 1 tag of artists you listend to.
 
-WARNING: this script is quite hacky and may require some adjustments to work for your dataset. ill try to make it bit easier to use in the future, and maybe even creating a user-friendly website for direclty generating the graph directly from a last.fm user name. let me know if you are interested.
+WARNING: this script is quite hacky. maybe I'll create a user-friendly website for directly generating the graph from a last.fm user name.
 
 PREREQUISITE: You need to have Node.JS installed on your system 
 
