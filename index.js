@@ -6,6 +6,7 @@ const NUMBER_TOP_TAGS = 30
 const FETCH_TAGS = true
 const IGNORED_TAGS = [
 	null,
+	undefined,
 	'seen live',
 	'musik um sich allein zu betrinken',
 	'dank',
