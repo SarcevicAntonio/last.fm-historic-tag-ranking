@@ -102,14 +102,20 @@ async function main() {
 
 	console.warn('selecting unique tags')
 	const tag_set = new Set()
-	for (const array of Object.values(tag_count_per_year)) {
-		array.forEach(({ tag }) => {
+	const year_set = new Set()
+	for (const [year, tag_array] of Object.entries(tag_count_per_year)) {
+		year_set.add(year)
+		tag_array.forEach(({ tag }) => {
 			tag_set.add(tag)
 		})
 	}
 
 	console.warn('printing ranking')
-	console.log('tag,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023')
+	const first_row = ['tag']
+	for (const year of [...year_set]) {
+		first_row.push(year)
+	}
+	console.log(first_row.map((v) => `"${v}"`).join(','))
 	for (const tag of [...tag_set]) {
 		const row = [
 			tag
@@ -117,7 +123,7 @@ async function main() {
 				.map((s) => s[0].toUpperCase() + s.substring(1))
 				.join(' '),
 		]
-		for (let year = 2011; year <= 2023; year++) {
+		for (const year of [...year_set]) {
 			const index = tag_count_per_year[year].findIndex((i) => i.tag === tag)
 			if (index === -1) {
 				row.push('')
