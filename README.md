@@ -1,3 +1,7 @@
+Read the Article [Visualizing my musical journey](https://blog.datawrapper.de/musical-genre-timeline/) on the Datawrapper blog.
+
+---
+
 # Historic Tag Timeline
 
 Generate a ranking of top tags for each year based on the nr. 1 tag of artists you listend to.
